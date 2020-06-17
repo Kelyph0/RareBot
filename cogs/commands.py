@@ -1,11 +1,12 @@
 import platform
 import discord
-import pyjokes
+import json
 
 from discord.ext import commands
 from random import choice
 from joke.jokes import *
-from Distractions import get_joke_categories, get_joke
+from cogs.Distractions import Distractions
+
 
 import cogs._json
 
@@ -14,6 +15,7 @@ class Commands(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.distractions = Distractions(bot)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -43,7 +45,7 @@ class Commands(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['disconnect', 'close', 'stopbot'])
+    @commands.command(aliases=['close', 'stopbot'])
     @commands.is_owner()
     async def logout(self, ctx):
         """
@@ -71,7 +73,7 @@ class Commands(commands.Cog):
                        f".　　　　　　　　　　　　　.　　　ﾟ　  　　　.　　　　　　　　　　　　　✦. 　　 　　　　　　　 ✦ 　　　　　　　 　 　　 　　 　 　　✦ 　　 　 　　　　　 "
                        f"　　　　　　　　.　　　　,　　   　 .　　　　　　　　　　　　　.　　　ﾟ　  　　　.　　　　　　　　　　　　　✦")
 
-    @commands.command(name='joke')
+    @commands.command(name='otherjokes')
     async def joke(self, ctx):
         """
         Tells a joke.
@@ -121,16 +123,27 @@ class Commands(commands.Cog):
 
     @commands.command(name='jokecategories')
     async def joke_categories(self, ctx):
-        await ctx.send(get_joke_categories())
+        await ctx.send(self.distractions.get_joke_categories())
 
-    @commands.command(name='joke get')
+    @commands.command(name='joke')
     async def joke_get(self, ctx):
-        arguments = ctx.content.split(" ")
+        arguments = ctx.content
         if len(arguments) == 3:
-            await ctx.send(get_joke(arguments[-1]))
+            await ctx.send(self.distractions.get_joke(arguments[-1]))
+        else:
+            await ctx.send('Sorry wrong format.')
 
 
-
+    @commands.command(name='getmeme')
+    async def get_meme(self, ctx):
+        arguments = ctx.content
+        categories = ["hot", "funny", "animals", "awesome", "car", "gaming", "wtf", "politics", "meme", "darkhumor",
+                          "satisfying"]
+        if len(arguments) == 3 and arguments[-1] in categories:
+            await ctx.send(self.distractions.get_meme(arguments))
+        else:
+            await ctx.send('Sorry wrong format')
+        return
 
 def setup(bot):
     bot.add_cog(Commands(bot))

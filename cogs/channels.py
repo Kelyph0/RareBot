@@ -2,6 +2,10 @@ import discord
 from discord.ext import commands
 import random
 
+import tracemalloc
+
+tracemalloc.start()
+
 class Channels(commands.Cog):
 
     def __init__(self, bot):
@@ -38,6 +42,9 @@ class Channels(commands.Cog):
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def new(self, ctx):
+        """
+        Creates a channel
+        """
         await ctx.send("Invalid sub-command passed.")
 
     @new.command()
@@ -51,7 +58,7 @@ class Channels(commands.Cog):
         role: discord.PermissionOverwrite(read_messages=True)
         }
         category = await ctx.guild.create_category(name=name, overwrites=overwrites)
-        await ctx.send(f"Hey dude, I made {category.name} for ya!")
+        await ctx.send(f"I made {category.name} for ya!")
 
     @new.command()
     @commands.guild_only()
@@ -64,13 +71,16 @@ class Channels(commands.Cog):
         role: discord.PermissionOverwrite(read_messages=True)
         }
         channel = await ctx.guild.create_text_channel(name=name, overwrites=overwrites, category=self.bot.get_channel(709002944879656960))
-        await ctx.send(f"Hey dude, I made {channel.name} for ya!")
+        await ctx.send(f"I made {channel.name} for ya!")
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def delete(self, ctx):
+        """
+        Deletes a selected channel
+        """
         await ctx.send("Invalid sub-command passed.")
 
     @delete.command(name='category')
@@ -79,7 +89,7 @@ class Channels(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def _category(self, ctx, category: discord.CategoryChannel, *, reason=None):
         await category.delete(reason=reason)
-        await ctx.send(f"Hey man! I deleted {category.name} for ya!")
+        await ctx.send(f"I deleted {category.name} for ya!")
 
     @delete.command(name='channel')
     @commands.guild_only()
@@ -88,13 +98,16 @@ class Channels(commands.Cog):
     async def _channel(self, ctx, channel: discord.TextChannel=None, *, reason=None):
         channel = channel or ctx.channel
         await channel.delete(reason=reason)
-        await ctx.send(f"Hey man! I deleted {channel.name} for ya!")
+        await ctx.send(f"I deleted {channel.name} for ya!")
 
     @commands.command()
     @commands.guild_only()
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def lockdown(self, ctx, channel: discord.TextChannel=None):
+        """
+        Lockdown a selected channel
+        """
         channel = channel or ctx.channel
 
         if ctx.guild.default_role not in channel.overwrites:

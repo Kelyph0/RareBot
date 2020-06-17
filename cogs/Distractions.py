@@ -5,6 +5,9 @@ from random import choice
 
 from discord.ext import commands
 
+from os import system, path
+
+
 class Distractions(commands.Cog):
 
     def __init__(self, bot):
@@ -14,7 +17,7 @@ class Distractions(commands.Cog):
     async def on_ready(self):
         print("Distractions Cog has been loaded\n-----")
 
-    async def get_joke_categories(self):
+    def get_joke_categories(self):
         r = req.get("https://sv443.net/jokeapi/v2/categories")
         result = "The available categories are: \n-----"
         for category in json.loads(r.text)["categories"]:
